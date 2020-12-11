@@ -1,0 +1,39 @@
+- hosts: dnode
+  tasks:
+          - name: Transferring s/w of JDK to data node
+            copy:
+                    src: "/root/jdk-8u171-linux-x64.rpm"
+                    dest: "/root/"
+          - name: Transferring s/w of HADOOP to data node
+            copy:
+                    src: "/root/hadoop-1.2.1-1.x86_64.rpm"
+                    dest: "/root/"
+          - name: Installing java
+            shell: "rpm -i jdk-8u171-linux-x64.rpm"
+            ignore_errors: true
+          - name: Installing hadoop
+            shell: "rpm -i hadoop-1.2.1-1.x86_64.rpm --force"
+            ignore_errors: true
+          - name: Changing file hdfs-site.xml of data node
+            copy:
+                   src: "/root/hdfs-data.xml"
+                   dest: "/etc/hadoop/hdfs-site.xml"
+          - name: Changing file core-site.xml of data node
+            template:
+                   src: "/arth_ansible_tasks/core-master.xml"
+                   dest: "/etc/hadoop/core-site.xml"
+          - name: Making directory /dn1
+            file:
+                    state: directory
+                    path: /dn1
+
+          - name: Disabling firewall
+            service:
+                    name: "firewalld"
+                    state: stopped
+          - name: Disabling selinux
+            selinux:
+                   state: disabled
+          - name: Starting the namenode
+            command: "hadoop-daemon.sh start datanode"
+
