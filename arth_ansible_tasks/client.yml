@@ -1,0 +1,31 @@
+- hosts: client
+  tasks:
+          - name: Transferring s/w of JDK to client
+            copy:
+                    src: "/root/jdk-8u171-linux-x64.rpm"
+                    dest: "/root/"
+          - name: Transferring s/w of HADOOP to client
+            copy:
+                    src: "/root/hadoop-1.2.1-1.x86_64.rpm"
+                    dest: "/root/"
+          - name: Installing java
+            shell: "rpm -i jdk-8u171-linux-x64.rpm"
+            ignore_errors: true
+
+          - name: Installing hadoop
+            shell:  "rpm -i hadoop-1.2.1-1.x86_64.rpm --force"
+            ignore_errors: true
+
+          - name: Changing file core-site.xml of client
+            template:
+                   src: "/arth_ansible_tasks/core-master.xml"
+                   dest: "/etc/hadoop/core-site.xml"
+          - name: Disabling firewall
+            service:
+                    name: "firewalld"
+                    state: stopped
+          - name: Disabling selinux
+            selinux:
+                   state: disabled
+
+
