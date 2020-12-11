@@ -1,0 +1,1 @@
+# hadoop_configuration_by_ansible
